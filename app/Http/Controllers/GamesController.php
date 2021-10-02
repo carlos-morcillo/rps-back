@@ -4,36 +4,19 @@
 
 
     use App\Models\Game;
+    use Illuminate\Http\Request;
+    use Illuminate\Http\Response;
     use Illuminate\Support\Facades\Cache;
 
     class GamesController extends Controller
     {
 
-        const GAME_STATES = [
-            ['code' => 'IN_PROGRESS', 'name' => 'En progreso'],
-            ['code' => 'FINISHED', 'name' => 'Finalizado']
-        ];
-
-        const ACTIONS = [
-            ['code' => 'ROCK', 'name' => 'piedra', 'image' => 'asdf', 'strongAgainst' => ['SCISSORS']],
-            ['code' => 'PAPER', 'name' => 'papel', 'image' => 'asdfd', 'strongAgainst' => ['ROCK']],
-            ['code' => 'SCISSORS', 'name' => 'TIJERAS', 'image' => 'asdfd', 'strongAgainst' => ['PAPER']]
-        ];
-
-        const MODES = [
-            [
-                'code' => 'TRADITIONAL',
-                'name' => 'Tradicional',
-                'allowedActionCodes' => ['ROCK', 'PAPER', 'SCISSORS']
-            ]
-        ];
-
         public function settings()
         {
             return response()->json([
-                'game_states' => self::GAME_STATES,
-                'actions' => self::ACTIONS,
-                'modes' => self::MODES
+                'game_states' => Game::STATES,
+                'actions' => Game::ACTIONS,
+                'modes' => Game::MODES
             ]);
         }
 
@@ -68,9 +51,9 @@
         }
 
 
-        public function create(string $modeCode = 'TRADITIONAL', string $userUUID)
+        public function create(string $userUUID, string $modeCode = 'TRADITIONAL', int $numberOfRounds = 3)
         {
-            return response()->json(Game::create($modeCode, $userUUID));
+            return response()->json(Game::create($modeCode, $numberOfRounds, $userUUID));
         }
 
         /**
@@ -85,12 +68,18 @@
             return response()->json($result);
         }
 
-        public function saveRound(string $id)
+        public function addRound(Request $request, string $userUUID, string $id = null)
         {
-//            if( !           $game = Game::find($id)) {
-//                return response()->json('GAME_NOT_FOUND', Response::HTTP_NOT_FOUND);
-//            }
-//            $game->
-//            return Game::create($userUUID);
+            try {
+                $data = $request->all();
+                if (!$game = Game::find($userUUID, $id)) {
+                    return response()->json('game_not_found', Response::HTTP_NOT_FOUND);
+                }
+
+                $game->addRound($data);
+                return response()->json($game);
+            } catch (\Exception $e) {
+                return response()->json($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
     }

@@ -19,10 +19,10 @@
 
     $router->group([], function () use ($router) {
         $router->get('/settings', ['uses' => 'GamesController@settings']);
-        $router->get('/historical/{uuid}', ['uses' => 'GamesController@historical']);
         $router->group(['prefix' => 'games'], function () use ($router) {
             $router->post('/{userUUID}', ['uses' => 'GamesController@index']);
-            $router->put('/{codeMode}/{userUUID}', ['uses' => 'GamesController@create']);
+            $router->put('/{userUUID}/{id}/rounds', ['uses' => 'GamesController@addRound']);
+            $router->put('/{userUUID}/{codeMode}/{numberOfRounds}', ['uses' => 'GamesController@create']);
             $router->get('/{userUUID}/{id}', ['uses' => 'GamesController@show']);
             $router->put('/{id}/rounds', ['uses' => 'GamesController@saveRound']);
             $router->delete('/{userUUID}', ['uses' => 'GamesController@delete']);
