@@ -10,7 +10,7 @@
         public $roundNumber;
         public $userActionCode;
         public $machineActionCode;
-        public $winnerUUID;
+        public $resultCode;
         public $createdAt;
 
         public function __construct(array $attrs)

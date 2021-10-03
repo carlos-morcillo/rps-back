@@ -14,7 +14,7 @@
         public function settings()
         {
             return response()->json([
-                'game_states' => Game::STATES,
+                'states' => Game::STATES,
                 'actions' => Game::ACTIONS,
                 'modes' => Game::MODES
             ]);

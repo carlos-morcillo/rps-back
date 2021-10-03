@@ -24,7 +24,6 @@
             $router->put('/{userUUID}/{id}/rounds', ['uses' => 'GamesController@addRound']);
             $router->put('/{userUUID}/{codeMode}/{numberOfRounds}', ['uses' => 'GamesController@create']);
             $router->get('/{userUUID}/{id}', ['uses' => 'GamesController@show']);
-            $router->put('/{id}/rounds', ['uses' => 'GamesController@saveRound']);
             $router->delete('/{userUUID}', ['uses' => 'GamesController@delete']);
             $router->delete('/{userUUID}/{id}', ['uses' => 'GamesController@delete']);
         });

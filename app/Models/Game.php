@@ -20,9 +20,9 @@
         ];
 
         const ACTIONS = [
-            ['code' => 'ROCK', 'name' => 'piedra', 'image' => 'asdf', 'strongAgainst' => ['SCISSORS']],
-            ['code' => 'PAPER', 'name' => 'papel', 'image' => 'asdfd', 'strongAgainst' => ['ROCK']],
-            ['code' => 'SCISSORS', 'name' => 'TIJERAS', 'image' => 'asdfd', 'strongAgainst' => ['PAPER']]
+            ['code' => 'ROCK', 'name' => 'piedra', 'image' => 'far fa-hand-rock', 'strongAgainst' => ['SCISSORS']],
+            ['code' => 'PAPER', 'name' => 'papel', 'image' => 'far fa-hand-paper', 'strongAgainst' => ['ROCK']],
+            ['code' => 'SCISSORS', 'name' => 'TIJERAS', 'image' => 'far fa-hand-scissors', 'strongAgainst' => ['PAPER']]
         ];
 
         const MODES = [
@@ -46,7 +46,7 @@
         /**
          * @var int Número de rondas total del juego
          */
-        public $numberOrRounds;
+        public $numberOfRounds;
 
         /**
          * @var string Código del modo de juego
@@ -84,13 +84,13 @@
         public $resultCode;
 
 
-        public function __construct(string $modeCode, int $numberOrRounds, string $userUUID)
+        public function __construct(string $modeCode, int $numberOfRounds, string $userUUID)
         {
             $this->id = Str::uuid()->toString();
             $this->roundNumber = 1;
             $this->userUUID = $userUUID;
             $this->modeCode = $modeCode;
-            $this->numberOrRounds = $numberOrRounds;
+            $this->numberOfRounds = $numberOfRounds;
             $this->stateCode = Game::STATES[0]['code'];
             $this->createdAt = Carbon::now();
         }
@@ -98,14 +98,14 @@
         /**
          * Crea un nuevo juego y devuelve su información
          * @param string $modeCode
-         * @param int $numberOrRounds
+         * @param int $numberOfRounds
          * @param string $userUUID
          * @return Game
          */
-        public static function create(string $modeCode, int $numberOrRounds, string $userUUID)
+        public static function create(string $modeCode, int $numberOfRounds, string $userUUID)
         {
             $games = Cache::get("games:$userUUID", collect());
-            $game = new Game($modeCode, $numberOrRounds, $userUUID);
+            $game = new Game($modeCode, $numberOfRounds, $userUUID);
             $games->push($game);
             Cache::put("games:$userUUID", $games);
             return $game;
@@ -168,7 +168,7 @@
          */
         public function addRound(array $attrs): Game
         {
-            if ($this->numberOrRounds <= ($this->rounds ?? collect())->count() || $this->stateCode === 'FINISHED') {
+            if ($this->numberOfRounds <= ($this->rounds ?? collect())->count() || $this->stateCode === 'FINISHED') {
                 throw new \Exception('game_is_completed');
             }
 
@@ -179,7 +179,7 @@
                     'roundNumber' => $this->roundNumber,
                     'userActionCode' => $attrs['userActionCode'],
                     'machineActionCode' => $attrs['machineActionCode'],
-                    'winnerUUID' => $attrs['winnerUUID']
+                    'resultCode' => $attrs['resultCode']
                 ]
             );
             if (!$this->rounds) {
@@ -188,16 +188,16 @@
             $this->rounds->push($round);
 
             // Si se han jugado todas las rondas, se da el juego por finalizado
-            if ($this->rounds->count() >= $this->numberOrRounds) {
+            if ($this->rounds->count() >= $this->numberOfRounds) {
                 $this->stateCode = 'FINISHED';
 
                 // Si el jugador ha ganado más veces, se declara vencedor de la partida
-                $wins = $this->rounds->where('winnerUUID', $this->userUUID)->count();
-                if ($wins > ($this->numberOrRounds / 2)) {
+                $victories = $this->rounds->where('resultCode', 'VICTORY')->count();
+                if ($victories > ($this->numberOfRounds / 2)) {
                     $this->winnerUUID = $this->userUUID;
-                    $this->resultCode = 'WIN';
+                    $this->resultCode = 'VICTORY';
                 } else {
-                    $this->resultCode = 'LOOSE';
+                    $this->resultCode = 'DEFEAT';
                 }
             } else {
                 $this->roundNumber++;
