@@ -22,7 +22,7 @@
         $router->group(['prefix' => 'games'], function () use ($router) {
             $router->post('/{userUUID}', ['uses' => 'GamesController@index']);
             $router->put('/{userUUID}/{id}/rounds', ['uses' => 'GamesController@addRound']);
-            $router->put('/{userUUID}/{codeMode}/{numberOfRounds}', ['uses' => 'GamesController@create']);
+            $router->put('/{userUUID}/{modeCode}/{numberOfRounds}', ['uses' => 'GamesController@create']);
             $router->get('/{userUUID}/{id}', ['uses' => 'GamesController@show']);
             $router->delete('/{userUUID}', ['uses' => 'GamesController@delete']);
             $router->delete('/{userUUID}/{id}', ['uses' => 'GamesController@delete']);
