@@ -20,9 +20,36 @@
         ];
 
         const ACTIONS = [
-            ['code' => 'ROCK', 'name' => 'piedra', 'image' => 'far fa-hand-rock', 'strongAgainst' => ['SCISSORS']],
-            ['code' => 'PAPER', 'name' => 'papel', 'image' => 'far fa-hand-paper', 'strongAgainst' => ['ROCK']],
-            ['code' => 'SCISSORS', 'name' => 'TIJERAS', 'image' => 'far fa-hand-scissors', 'strongAgainst' => ['PAPER']]
+            [
+                'code' => 'ROCK',
+                'name' => 'piedra',
+                'image' => 'far fa-hand-rock',
+                'strongAgainst' => ['SCISSORS', 'LIZARD']
+            ],
+            [
+                'code' => 'PAPER',
+                'name' => 'papel',
+                'image' => 'far fa-hand-paper',
+                'strongAgainst' => ['ROCK', 'SPOCK']
+            ],
+            [
+                'code' => 'SCISSORS',
+                'name' => 'tijeras',
+                'image' => 'far fa-hand-scissors',
+                'strongAgainst' => ['PAPER', 'LIZARD']
+            ],
+            [
+                'code' => 'LIZARD',
+                'name' => 'lagarto',
+                'image' => 'far fa-hand-lizard',
+                'strongAgainst' => ['PAPER', 'SPOCK']
+            ],
+            [
+                'code' => 'SPOCK',
+                'name' => 'spock',
+                'image' => 'far fa-hand-spock',
+                'strongAgainst' => ['ROCK', 'SCISSORS']
+            ],
         ];
 
         const MODES = [
@@ -30,6 +57,11 @@
                 'code' => 'TRADITIONAL',
                 'name' => 'Tradicional',
                 'allowedActionCodes' => ['ROCK', 'PAPER', 'SCISSORS']
+            ],
+            [
+                'code' => 'BIG_BANG',
+                'name' => '+ Lagarto y Spock',
+                'allowedActionCodes' => ['ROCK', 'PAPER', 'SCISSORS', 'LIZARD', 'SPOCK']
             ]
         ];
 
@@ -117,7 +149,7 @@
          * @param string $id
          * @return Game
          */
-        public static function find(string $userUUID, string $id): Game
+        public static function find(string $userUUID, string $id)
         {
             $games = Cache::get("games:$userUUID", collect());
             return $games->first(function ($item) use ($id) {
